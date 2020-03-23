@@ -6,22 +6,21 @@ def dpp(L, max_len, epsilon=1E-10):
     M = L.shape[0]
     cis = np.zeros((max_len, M))
     di2s = np.copy(np.diag(L))
-    select_items = list()
-    select_item = np.argmax(di2s)
-    select_items.append(select_item)
-    while len(select_items) < max_len:
-        k = len(select_items) -1
-        ci_optimal = cis[:k, select_item]
-        di_optimal = math.sqrt(di2s[select_item])
-        elements = L[select_item, :]
-        eis = (elements - np.dot(ci_optimal, cis[:k, :])) / di_optimal
+    j = np.argmax(di2s)
+    Yg = [j]
+    while len(Yg) < max_len:
+        k = len(Yg) -1
+        cj = cis[:k, j]
+        dj = math.sqrt(di2s[j])
+        elements = L[j, :]
+        eis = (elements - np.dot(cj, cis[:k, :])) / dj
         cis[k,:] = eis
         di2s -= np.square(eis)
-        select_item = np.argmax(di2s)
-        if di2s[select_item] < epsilon:
+        j = np.argmax(di2s)
+        if di2s[j] < epsilon:
             break
-        select_items.append(select_item)
-    return select_items
+        Yg.append(j)
+    return Yg
 
 def main():
     M = 1000
